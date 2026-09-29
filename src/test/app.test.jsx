@@ -14,6 +14,11 @@ describe('App shell', () => {
     expect(link).toHaveAttribute('href', '/');
   });
 
+  it('shows the cart count in the header on any view', async () => {
+    renderApp({ route: '/product/abc' });
+    expect(await screen.findByTestId('cart-count')).toHaveTextContent('0');
+  });
+
   it('routes /product/:productId to the detail page with the header', async () => {
     renderApp({ route: '/product/abc' });
     expect(await screen.findByRole('heading', { name: /product abc/i })).toBeInTheDocument();
