@@ -58,6 +58,17 @@ describe('Product list page', () => {
     expect(screen.getByTestId('results-count')).toHaveTextContent('1 product');
   });
 
+  it('keeps the caret where the user is typing', async () => {
+    const { user } = renderApp({ route: '/' });
+    await screen.findByText('iPhone 12');
+    const input = screen.getByRole('searchbox');
+
+    await user.type(input, 'iphne');
+    await user.type(input, 'o 1', { initialSelectionStart: 3, initialSelectionEnd: 3 });
+
+    expect(input).toHaveValue('ipho 1ne');
+  });
+
   it('shows everything again when the search is cleared', async () => {
     const { user } = renderApp({ route: '/' });
     await screen.findByText('iPhone 12');
@@ -74,6 +85,16 @@ describe('Product list page', () => {
 
     expect(screen.getByRole('searchbox')).toHaveValue('acer');
     expect(screen.queryByText('iPhone 12')).not.toBeInTheDocument();
+  });
+
+  it('clears the search when the shop title takes the user home', async () => {
+    const { user } = renderApp({ route: '/?q=acer' });
+    await screen.findByText('Iconia Talk S');
+
+    await user.click(screen.getByRole('link', { name: /itx mobile shop/i }));
+
+    expect(screen.getByRole('searchbox')).toHaveValue('');
+    expect(screen.getByTestId('results-count')).toHaveTextContent('3 products');
   });
 
   it('links each item to its detail page keeping the query', async () => {
