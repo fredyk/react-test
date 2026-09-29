@@ -50,6 +50,15 @@ describe('createApi', () => {
     expect(cache.getOrLoad.mock.calls.map(([key]) => key)).toEqual(['products', 'product:7']);
   });
 
+  it('uses the browser cache by default, so a second read does not hit the network', async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse([{ id: '1' }]));
+    const api = createApi({ fetchImpl });
+
+    await api.getProducts();
+    expect(await api.getProducts()).toEqual([{ id: '1' }]);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it('never caches the cart', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ count: 1 }));
     const cache = { getOrLoad: vi.fn() };

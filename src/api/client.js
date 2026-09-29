@@ -1,3 +1,5 @@
+import { createCache } from './cache.js';
+
 export const API_BASE_URL = 'https://itx-frontend-test.onrender.com/api';
 
 export class ApiError extends Error {
@@ -8,13 +10,9 @@ export class ApiError extends Error {
   }
 }
 
-// Reads go through cache.getOrLoad(key, loader). Until there is a real cache, loading straight
-// from the API keeps the same contract.
-const noCache = { getOrLoad: (_key, loader) => loader() };
-
 export function createApi({
   fetchImpl = (...args) => globalThis.fetch(...args),
-  cache = noCache,
+  cache = createCache(),
   baseUrl = API_BASE_URL,
 } = {}) {
   async function request(path, init) {

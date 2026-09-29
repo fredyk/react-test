@@ -23,6 +23,8 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react/prop-types': 'off',
+      // Storage access can throw (private mode, quota); those catches are deliberately empty.
+      'no-empty': ['error', { allowEmptyCatch: true }],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
