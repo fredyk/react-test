@@ -1,14 +1,17 @@
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { AppRoutes } from '../App.jsx';
+import { AppProviders, AppRoutes } from '../App.jsx';
+import { fakeApi } from './fixtures.js';
 
-export function renderApp({ route = '/' } = {}) {
+export function renderApp({ route = '/', api = fakeApi() } = {}) {
   const user = userEvent.setup();
   const utils = render(
-    <MemoryRouter initialEntries={[route]}>
-      <AppRoutes />
-    </MemoryRouter>,
+    <AppProviders api={api}>
+      <MemoryRouter initialEntries={[route]}>
+        <AppRoutes />
+      </MemoryRouter>
+    </AppProviders>,
   );
-  return { ...utils, user };
+  return { ...utils, api, user };
 }

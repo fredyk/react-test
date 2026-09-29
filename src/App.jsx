@@ -1,8 +1,17 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { createApi } from './api/client.js';
+import { ApiProvider } from './context/ApiProvider.jsx';
 import { Layout } from './components/Layout.jsx';
 import { ProductListPage } from './pages/ProductListPage.jsx';
 import { ProductDetailPage } from './pages/ProductDetailPage.jsx';
 import { NotFoundPage } from './pages/NotFoundPage.jsx';
+
+const defaultApi = createApi();
+
+// Tests pass a fake api through the same providers the app uses.
+export function AppProviders({ api, children }) {
+  return <ApiProvider api={api}>{children}</ApiProvider>;
+}
 
 // Routes live apart from the router so tests can mount them inside a MemoryRouter.
 export function AppRoutes() {
@@ -19,8 +28,10 @@ export function AppRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <AppProviders api={defaultApi}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AppProviders>
   );
 }
