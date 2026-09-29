@@ -105,6 +105,10 @@ a {
   font: inherit;
 }
 
+.plp__title {
+  margin: 0 0 1rem;
+}
+
 .plp__count {
   color: var(--color-muted);
   font-size: 0.9rem;
@@ -195,7 +199,7 @@ a {
 
 .description__row {
   display: grid;
-  grid-template-columns: minmax(9rem, 12rem) 1fr;
+  grid-template-columns: 7rem 1fr;
   gap: 0.75rem;
   padding: 0.25rem 0;
   border-bottom: 1px solid var(--color-border);
@@ -282,7 +286,7 @@ a {
 }
 
 /* One column on phones, up to four per row on desktop. */
-@media (min-width: 480px) {
+@media (min-width: 360px) {
   .plp__grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -293,10 +297,32 @@ a {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  /* List title on the left and search on the right, as in the wireframe. */
+  .plp__top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .plp__top .search {
+    flex: 0 1 20rem;
+  }
+
   /* Image on the left, description on the right, as in the wireframe. */
   .pdp__columns {
     grid-template-columns: 1fr 1fr;
     align-items: start;
+  }
+
+  /* The image stays in view while the long spec list scrolls. */
+  .pdp__image {
+    position: sticky;
+    top: 1rem;
+  }
+
+  .description__row {
+    grid-template-columns: minmax(9rem, 12rem) 1fr;
   }
 }
 

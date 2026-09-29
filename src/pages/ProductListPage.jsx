@@ -44,8 +44,10 @@ export function ProductListPage() {
 
   return (
     <section className="plp">
-      <h1 className="plp__title">Products</h1>
-      <SearchBar value={query} onChange={handleSearch} />
+      <div className="plp__top">
+        <h1 className="plp__title">Products</h1>
+        <SearchBar value={query} onChange={handleSearch} />
+      </div>
       {loading ? (
         <p className="plp__status" role="status">
           Loading products
