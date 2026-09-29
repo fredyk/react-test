@@ -58,6 +58,44 @@ describe('Product detail page', () => {
     expect(screen.getByRole('radio', { name: 'Black' })).toBeChecked();
   });
 
+  it('keeps Add disabled until both options are chosen', async () => {
+    const { user } = renderApp({ route: '/product/acer-1' });
+    await screen.findByRole('heading', { name: /acer iconia talk s/i });
+
+    const add = screen.getByRole('button', { name: 'Add' });
+    expect(add).toBeDisabled();
+
+    await user.click(screen.getByRole('radio', { name: '32 GB' }));
+    expect(add).toBeEnabled();
+  });
+
+  it('adds the chosen options to the cart and confirms', async () => {
+    const { user, api } = renderApp({ route: '/product/acer-1' });
+    await screen.findByRole('heading', { name: /acer iconia talk s/i });
+
+    await user.click(screen.getByRole('radio', { name: '32 GB' }));
+    await user.click(screen.getByRole('button', { name: 'Add' }));
+
+    expect(await screen.findByText('Added to cart')).toBeInTheDocument();
+    expect(api.addToCart).toHaveBeenCalledWith({
+      id: 'acer-1',
+      colorCode: 1000,
+      storageCode: 2001,
+    });
+  });
+
+  it('shows an error message when the cart request fails', async () => {
+    const api = fakeApi({ addToCart: vi.fn().mockRejectedValue(new Error('boom')) });
+    const { user } = renderApp({ route: '/product/acer-1', api });
+    await screen.findByRole('heading', { name: /acer iconia talk s/i });
+
+    await user.click(screen.getByRole('radio', { name: '32 GB' }));
+    await user.click(screen.getByRole('button', { name: 'Add' }));
+
+    expect(await screen.findByText('Could not add to cart')).toBeInTheDocument();
+    expect(screen.getByTestId('cart-count')).toHaveTextContent('0');
+  });
+
   it('links back to the list keeping the query', async () => {
     renderApp({ route: '/product/apple-1?q=apple' });
 

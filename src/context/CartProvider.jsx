@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useApi } from './ApiContext.js';
 import { CART_COUNT_KEY, CartContext, readCartCount, writeCartCount } from './CartContext.js';
 
 export function CartProvider({ storage, children }) {
+  const api = useApi();
   const [cartStorage] = useState(() => storage ?? globalThis.localStorage ?? null);
   const [count, setCount] = useState(() => readCartCount(cartStorage));
 
@@ -21,5 +23,14 @@ export function CartProvider({ storage, children }) {
     return () => globalThis.removeEventListener('storage', handleStorage);
   }, []);
 
-  return <CartContext.Provider value={{ count }}>{children}</CartContext.Provider>;
+  function addToCart({ id, colorCode, storageCode }) {
+    return api.addToCart({ id, colorCode, storageCode }).then((added) => {
+      // The API answers how many units this request added (always 1), not the cart total: it is added
+      // to the count, and the functional update keeps two concurrent adds from losing one.
+      setCount((current) => current + added);
+      return added;
+    });
+  }
+
+  return <CartContext.Provider value={{ count, addToCart }}>{children}</CartContext.Provider>;
 }

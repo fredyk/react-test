@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCart } from '../context/CartContext.js';
 
 function optionsOf(product, key) {
   return product?.options?.[key] ?? [];
@@ -10,10 +11,22 @@ function onlyCode(options) {
 }
 
 export function Actions({ product }) {
+  const { addToCart } = useCart();
   const colors = optionsOf(product, 'colors');
   const storages = optionsOf(product, 'storages');
   const [colorCode, setColorCode] = useState(() => onlyCode(colors));
   const [storageCode, setStorageCode] = useState(() => onlyCode(storages));
+  const [status, setStatus] = useState('idle');
+
+  const ready = colorCode !== null && storageCode !== null;
+
+  function handleAdd() {
+    setStatus('adding');
+    addToCart({ id: product.id, colorCode, storageCode }).then(
+      () => setStatus('success'),
+      () => setStatus('error'),
+    );
+  }
 
   return (
     <div className="actions">
@@ -47,6 +60,21 @@ export function Actions({ product }) {
           </label>
         ))}
       </fieldset>
+      <button
+        className="actions__add"
+        type="button"
+        onClick={handleAdd}
+        // Disabled while a request is in flight, so a double click does not add twice.
+        disabled={!ready || status === 'adding'}
+      >
+        Add
+      </button>
+      <p className="actions__feedback" role="status" aria-live="polite">
+        {status === 'success' ? 'Added to cart' : ''}
+      </p>
+      <p className="actions__feedback" role="alert" aria-live="assertive">
+        {status === 'error' ? 'Could not add to cart' : ''}
+      </p>
     </div>
   );
 }
