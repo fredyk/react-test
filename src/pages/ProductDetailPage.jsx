@@ -3,6 +3,7 @@ import { useProduct } from '../hooks/useProduct.js';
 import { productSpecs } from '../utils/productSpecs.js';
 import { ProductImage } from '../components/ProductImage.jsx';
 import { Description } from '../components/Description.jsx';
+import { Actions } from '../components/Actions.jsx';
 import { Retry } from '../components/Retry.jsx';
 
 export function ProductDetailPage() {
@@ -52,6 +53,8 @@ export function ProductDetailPage() {
         <div className="pdp__details">
           <h1 className="pdp__title">{title}</h1>
           <Description specs={productSpecs(data)} />
+          {/* key: another product starts with fresh selections instead of keeping the previous ones. */}
+          <Actions key={data.id} product={data} />
         </div>
       </div>
     </section>

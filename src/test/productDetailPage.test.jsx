@@ -28,6 +28,36 @@ describe('Product detail page', () => {
     expect(screen.getByText('260 g')).toBeInTheDocument();
   });
 
+  it('preselects the only colour and leaves the storages unchecked', async () => {
+    renderApp({ route: '/product/acer-1' });
+    await screen.findByRole('heading', { name: /acer iconia talk s/i });
+
+    expect(screen.getByRole('radio', { name: 'Black' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: '16 GB' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: '32 GB' })).not.toBeChecked();
+  });
+
+  it('preselects the only storage on a product that has one', async () => {
+    renderApp({ route: '/product/apple-1' });
+    await screen.findByRole('heading', { name: /apple iphone 12/i });
+
+    expect(screen.getByRole('radio', { name: '64 GB' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Black' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'White' })).not.toBeChecked();
+  });
+
+  it('lets the user pick one option per group', async () => {
+    const { user } = renderApp({ route: '/product/acer-1' });
+    await screen.findByRole('heading', { name: /acer iconia talk s/i });
+
+    await user.click(screen.getByRole('radio', { name: '16 GB' }));
+    await user.click(screen.getByRole('radio', { name: '32 GB' }));
+
+    expect(screen.getByRole('radio', { name: '32 GB' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: '16 GB' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Black' })).toBeChecked();
+  });
+
   it('links back to the list keeping the query', async () => {
     renderApp({ route: '/product/apple-1?q=apple' });
 
