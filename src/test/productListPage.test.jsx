@@ -39,6 +39,55 @@ describe('Product list page', () => {
     );
   });
 
+  it('filters by brand and model as the user types', async () => {
+    const { user } = renderApp({ route: '/' });
+    await screen.findByText('iPhone 12');
+
+    await user.type(screen.getByRole('searchbox'), 'apple');
+
+    expect(screen.getByText('iPhone 12')).toBeInTheDocument();
+    expect(screen.queryByText('Iconia Talk S')).not.toBeInTheDocument();
+  });
+
+  it('reports the number of matching products', async () => {
+    const { user } = renderApp({ route: '/' });
+    await screen.findByText('iPhone 12');
+
+    await user.type(screen.getByRole('searchbox'), 'samsung');
+
+    expect(screen.getByTestId('results-count')).toHaveTextContent('1 product');
+  });
+
+  it('shows everything again when the search is cleared', async () => {
+    const { user } = renderApp({ route: '/' });
+    await screen.findByText('iPhone 12');
+
+    await user.type(screen.getByRole('searchbox'), 'apple');
+    await user.clear(screen.getByRole('searchbox'));
+
+    expect(screen.getByTestId('results-count')).toHaveTextContent('3 products');
+  });
+
+  it('restores the search from the url', async () => {
+    renderApp({ route: '/?q=acer' });
+    await screen.findByText('Iconia Talk S');
+
+    expect(screen.getByRole('searchbox')).toHaveValue('acer');
+    expect(screen.queryByText('iPhone 12')).not.toBeInTheDocument();
+  });
+
+  it('links each item to its detail page keeping the query', async () => {
+    const { user } = renderApp({ route: '/' });
+    await screen.findByText('iPhone 12');
+
+    await user.type(screen.getByRole('searchbox'), 'apple');
+
+    expect(screen.getByRole('link', { name: /apple iphone 12/i })).toHaveAttribute(
+      'href',
+      '/product/apple-1?q=apple',
+    );
+  });
+
   it('offers a retry when the product list fails, and recovers', async () => {
     const api = fakeApi({
       getProducts: vi.fn().mockRejectedValueOnce(new Error('boom')).mockResolvedValue(products),
