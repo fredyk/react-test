@@ -158,6 +158,63 @@ a {
   font-weight: 700;
 }
 
+.pdp__back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.pdp__columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.pdp__image {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.pdp__title {
+  margin-top: 0;
+}
+
+.description {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.35rem;
+  margin: 0 0 1.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.description__row {
+  display: grid;
+  grid-template-columns: minmax(9rem, 12rem) 1fr;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.description__label {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.description__value {
+  margin: 0;
+}
+
+.not-found {
+  text-align: center;
+  padding: 3rem 0;
+}
+
 .retry {
   padding: 0.5rem 1.25rem;
   border: 1px solid var(--color-accent);
@@ -183,6 +240,12 @@ a {
 @media (min-width: 768px) {
   .plp__grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Image on the left, description on the right, as in the wireframe. */
+  .pdp__columns {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
   }
 }
 
